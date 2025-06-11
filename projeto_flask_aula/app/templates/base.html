@@ -8,6 +8,15 @@
 <body>
     <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo do site"/>
     <header>Meu Site</header>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
     {% block conteudo %}
     {% endblock %}
     <footer>Todos os direitos reservados</footer>
