@@ -30,3 +30,33 @@ def cadastrar_usuario():
     if formulario.validate_on_submit():
         return UsuarioController.cadastrar_usuario(formulario)
     return render_template('cadastro_usuario.html', title='Cadastro de Usuario', form = formulario)
+
+
+@app.route('/listar', methods=['GET'])
+def listar():
+    usuarios = UsuarioController.listar_usuarios()
+    for u in usuarios:
+        print(u.id, u.username, u.email)
+    return render_template("index.html")
+
+
+@app.route('/listar_filtro', methods=['GET'])
+def listar_com_filtro():
+    username = 'leosilva'
+    usuario = UsuarioController.buscar_por_username(username)
+    print(usuario.id, usuario.username, usuario.email)    
+    return render_template("index.html")
+
+
+@app.route('/atualizar/<int:id>', methods=['GET'])
+def atualizar(id):
+    form = UsuarioForm()
+    form.username = 'atualizei_de_novo'
+    UsuarioController.atualizar_usuario(id, form)
+    return render_template("index.html")
+
+
+@app.route('/remover/<int:id>', methods=['GET'])
+def remover(id):
+    UsuarioController.remover_usuario(id)
+    return render_template("index.html")
