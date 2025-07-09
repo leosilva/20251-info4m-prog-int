@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template
+from flask import render_template, flash
 from app.forms.login_form import LoginForm
 from app.forms.usuario_form import UsuarioForm
 from app.controllers.authenticationController import AuthenticationController
@@ -24,20 +24,24 @@ def login():
     return render_template('login.html', title='Login', form = formulario)
 
 
-@app.route("/inserir", methods=['GET', 'POST'])
-def cadastrar_usuario():
+@app.route("/cadastrar", methods=['GET', 'POST'])
+def cadastrar():
     formulario = UsuarioForm()
     if formulario.validate_on_submit():
-        return UsuarioController.cadastrar_usuario(formulario)
-    return render_template('cadastro_usuario.html', title='Cadastro de Usuario', form = formulario)
+        sucesso = UsuarioController.salvar(formulario)
+        if sucesso:
+            flash("Usuario cadastrado com sucesso!", category="success")
+            return render_template("index.html")
+        else:
+            flash("Erro ao cadastrar novo usuário.", category="error")
+            return render_template("cadastro.html", form = formulario)
+    return render_template('cadastro.html', titulo='Cadastro de Usuario', form = formulario)
 
 
 @app.route('/listar', methods=['GET'])
 def listar():
-    usuarios = UsuarioController.listar_usuarios()
-    for u in usuarios:
-        print(u.id, u.username, u.email)
-    return render_template("index.html")
+    lista_usuarios = UsuarioController.listar_usuarios()
+    return render_template("listar.html", usuarios = lista_usuarios)
 
 
 @app.route('/listar_filtro', methods=['GET'])

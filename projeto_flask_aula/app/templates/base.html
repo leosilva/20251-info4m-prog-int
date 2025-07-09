@@ -4,15 +4,29 @@
     <meta charset="UTF-8">
     <title>{% block titulo %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo do site"/>
-    <header>Meu Site</header>
-    {% with messages = get_flashed_messages() %}
+    <header>
+        <div>
+            Rede Social:
+            <a href="/">Início</a>
+            <a href="{{ url_for('login') }}">Login</a>
+            <a href="{{ url_for('cadastrar') }}">Cadastro de Usuário</a>
+            <a href="{{ url_for('listar') }}">Listar Usuários</a>
+        </div>
+    </header>
+    {% with messages = get_flashed_messages(with_categories=True) %}
     {% if messages %}
         <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
+            {% for category, message in messages %}
+                {% if category == 'error' %}
+                    <li><i class="fa fa-exclamation-triangle"></i> {{ message }}</li>
+                {% elif category == 'success' %}
+                    <li><i class="fa fa-check"></i> {{ message }}</li>
+                {% else %}
+                    <li>{{ message }}</li>
+                {% endif %}
             {% endfor %}
         </ul>
     {% endif %}

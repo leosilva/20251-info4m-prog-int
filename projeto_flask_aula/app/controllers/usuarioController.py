@@ -1,20 +1,22 @@
-from flask import render_template, flash
 from app import db
 import sqlalchemy as sa
-
-
 from app.models import Usuario
+
 
 class UsuarioController:
     
-    def cadastrar_usuario(form):
-        usuario = Usuario()
-        form.populate_obj(usuario)
-        
-        db.session.add(usuario)
-        db.session.commit()
-        flash(f"O usuario {usuario.username} foi cadastrado com sucesso!")
-        return render_template("index.html", usuario = usuario)
+    
+    def salvar(form):
+        try:
+            usuario = Usuario()
+            form.populate_obj(usuario)
+            
+            db.session.add(usuario)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            return False
     
     
     def listar_usuarios():

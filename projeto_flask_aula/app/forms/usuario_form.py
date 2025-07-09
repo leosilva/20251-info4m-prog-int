@@ -1,9 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, PasswordField, EmailField, SubmitField
+from wtforms.validators import DataRequired, Email
 
 class UsuarioForm(FlaskForm):
-    username = StringField('Usuário', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired()])
-    password_hash = PasswordField('Senha', validators=[DataRequired()])
-    submit = SubmitField('Cadastrar')
+    username = StringField('Nome de Usuário', validators=[DataRequired(message="Por favor, preencha o nome de usuário.")])
+    email = EmailField('Email', validators=[DataRequired(message="Por favor, preencha o email."), Email(message="Email inválido")])
+    submit = SubmitField('Salvar')
