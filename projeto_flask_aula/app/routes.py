@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, flash
+from flask import render_template, flash, redirect, url_for
 from app.forms.login_form import LoginForm
 from app.forms.usuario_form import UsuarioForm
 from app.controllers.authenticationController import AuthenticationController
@@ -8,7 +8,7 @@ from app.controllers.usuarioController import UsuarioController
 
 @app.route("/")
 def home():
-    return render_template("index.html", usuario = None, usuario_logado = False)
+    return render_template("index.html")
 
 
 @app.route("/sobre")
@@ -20,22 +20,32 @@ def sobre():
 def login():
     formulario = LoginForm()
     if formulario.validate_on_submit():
-        return AuthenticationController.login(formulario)
+        if AuthenticationController.login(formulario):
+            flash("Login realizado com sucessoo!", "success")
+            return redirect(url_for("home"))
+        else:
+            flash("Usuário ou senha inválidos", "error")
     return render_template('login.html', title='Login', form = formulario)
 
 
-@app.route("/cadastrar", methods=['GET', 'POST'])
+@app.route('/logout', methods=['GET'])
+def logout():
+    AuthenticationController.logout()
+    return redirect(url_for("home"))
+
+
+@app.route('/cadastrar', methods=['GET', 'POST'])
 def cadastrar():
     formulario = UsuarioForm()
-    if formulario.validate_on_submit():
+    if formulario.validate_on_submit():       
         sucesso = UsuarioController.salvar(formulario)
         if sucesso:
-            flash("Usuario cadastrado com sucesso!", category="success")
-            return render_template("index.html")
+            flash("Usuário cadastrado com sucesso!", category='success')
+            return redirect(url_for('login'))
         else:
-            flash("Erro ao cadastrar novo usuário.", category="error")
+            flash("Erro ao cadastrar o novo usuário.", category='error')
             return render_template("cadastro.html", form = formulario)
-    return render_template('cadastro.html', titulo='Cadastro de Usuario', form = formulario)
+    return render_template("cadastro.html", form = formulario)
 
 
 @app.route('/listar', methods=['GET'])
